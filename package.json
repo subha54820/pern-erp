@@ -1,0 +1,15 @@
+{
+  "name": "pern-erp-fundsroom",
+  "version": "1.0.0",
+  "description": "Full-Featured PERN Stack ERP Web Application - Fundsroom Case Study",
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "test:backend": "cd backend && npm test",
+    "seed:backend": "cd backend && npm run seed",
+    "build:frontend": "cd frontend && npm run build"
+  },
+  "keywords": ["pern", "erp", "react", "express", "postgres", "fundsroom"],
+  "author": "Fundsroom Tech Team",
+  "license": "ISC"
+}
