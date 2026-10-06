@@ -121,12 +121,12 @@ export default function EnquiriesPage({ user }) {
     <div>
       {alert && (
         <div style={{
-          padding: '12px 20px',
+          padding: '12px 18px',
           marginBottom: '20px',
-          borderRadius: 'var(--radius-md)',
-          background: alert.type === 'success' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(244, 63, 94, 0.15)',
-          border: `1px solid ${alert.type === 'success' ? '#10b981' : '#f43f5e'}`,
-          color: alert.type === 'success' ? '#6ee7b7' : '#fda4af',
+          borderRadius: 'var(--radius-sm)',
+          background: alert.type === 'success' ? '#ecfdf5' : '#fef2f2',
+          border: `1px solid ${alert.type === 'success' ? '#a7f3d0' : '#fecaca'}`,
+          color: alert.type === 'success' ? '#065f46' : '#991b1b',
           fontSize: '13.5px',
           fontWeight: 600,
           display: 'flex',
@@ -145,7 +145,7 @@ export default function EnquiriesPage({ user }) {
       <div className="page-header">
         <div>
           <h1>
-            <FileText size={24} color="#818cf8" /> Customer Enquiries
+            <FileText size={24} color="#2563eb" /> Customer Enquiries
           </h1>
           <p>Initiate customer requirements and generate line-item specifications.</p>
         </div>
@@ -342,34 +342,34 @@ export default function EnquiriesPage({ user }) {
         <div className="modal-overlay" onClick={() => setShowDetail(null)}>
           <div className="modal-content modal-lg" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3><FileText size={18} color="#818cf8" /> Enquiry #{showDetail.enquiry_number}</h3>
+              <h3><FileText size={18} color="#2563eb" /> Enquiry #{showDetail.enquiry_number}</h3>
               <button className="btn-close" onClick={() => setShowDetail(null)}><X size={18} /></button>
             </div>
 
             <div className="modal-body">
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '20px' }}>
-                <div style={{ padding: '12px', background: 'rgba(255, 255, 255, 0.02)', borderRadius: 'var(--radius-md)' }}>
+                <div style={{ padding: '12px', background: '#f8fafc', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-sm)' }}>
                   <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Customer</div>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff', marginTop: '4px' }}>{showDetail.customer_name}</div>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '4px' }}>{showDetail.customer_name}</div>
                   <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{showDetail.customer_email}</div>
                 </div>
 
-                <div style={{ padding: '12px', background: 'rgba(255, 255, 255, 0.02)', borderRadius: 'var(--radius-md)' }}>
+                <div style={{ padding: '12px', background: '#f8fafc', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-sm)' }}>
                   <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Status</div>
                   <div style={{ marginTop: '4px' }}>{getStatusBadge(showDetail.status)}</div>
                 </div>
 
-                <div style={{ padding: '12px', background: 'rgba(255, 255, 255, 0.02)', borderRadius: 'var(--radius-md)' }}>
+                <div style={{ padding: '12px', background: '#f8fafc', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-sm)' }}>
                   <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Created Date</div>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#ffffff', marginTop: '4px' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginTop: '4px' }}>
                     {new Date(showDetail.created_at).toLocaleDateString()}
                   </div>
                 </div>
               </div>
 
               {showDetail.notes && (
-                <div style={{ padding: '12px', background: 'rgba(99, 102, 241, 0.08)', border: '1px solid rgba(99, 102, 241, 0.2)', borderRadius: 'var(--radius-md)', marginBottom: '20px', fontSize: '13px' }}>
-                  <strong style={{ color: '#a5b4fc' }}>Notes: </strong>{showDetail.notes}
+                <div style={{ padding: '12px', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 'var(--radius-sm)', marginBottom: '20px', fontSize: '13px', color: '#1e40af' }}>
+                  <strong style={{ color: '#1d4ed8' }}>Notes: </strong>{showDetail.notes}
                 </div>
               )}
 
@@ -385,7 +385,7 @@ export default function EnquiriesPage({ user }) {
                 <tbody>
                   {(showDetail.items || []).map((it, i) => (
                     <tr key={i}>
-                      <td style={{ fontWeight: 600, color: '#ffffff' }}>{it.product_name}</td>
+                      <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{it.product_name}</td>
                       <td className="code-cell">{it.sku}</td>
                       <td>{it.quantity}</td>
                       <td className="price-cell" style={{ textAlign: 'right' }}>₹{Number(it.target_price).toLocaleString()}</td>

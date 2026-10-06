@@ -7,35 +7,32 @@ import {
   User, 
   AlertCircle, 
   ShieldCheck, 
-  Sparkles, 
   CheckCircle2, 
-  Target, 
-  Briefcase, 
   Eye, 
-  EyeOff
+  EyeOff, 
+  ArrowLeft 
 } from 'lucide-react';
 import api from '../api';
 
-export default function LoginPage({ onLogin }) {
-  const [authMode, setAuthMode] = useState('login'); // 'login' | 'signup'
+export default function AdminLoginPage({ onLogin }) {
+  const [mode, setMode] = useState('login'); // 'login' | 'signup'
   
-  // Login State
+  // Sign In State
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   
-  // Signup State
+  // Create Account State
   const [signupName, setSignupName] = useState('');
   const [signupEmail, setSignupEmail] = useState('');
   const [signupPassword, setSignupPassword] = useState('');
-  const [signupRole, setSignupRole] = useState('SALES_USER'); // 'ADMIN' | 'SALES_USER'
   
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // ─── HANDLE LOGIN SUBMIT ───
-  const handleLoginSubmit = async (e) => {
+  // ─── ADMIN SIGN IN SUBMIT ───
+  const handleAdminLogin = async (e) => {
     if (e) e.preventDefault();
     setError('');
     setSuccessMsg('');
@@ -45,20 +42,27 @@ export default function LoginPage({ onLogin }) {
         email: loginEmail.trim(), 
         password: loginPassword 
       });
+
       if (res.data.success) {
+        const userData = res.data.user;
+        // Strict role validation: Ensure only ADMIN accounts access Admin portal
+        if (userData.role !== 'ADMIN') {
+          setError('Access Denied: This account is registered as Sales Rep, not Administrator. Please return to the Sales portal.');
+          return;
+        }
         localStorage.setItem('token', res.data.token);
-        localStorage.setItem('user', JSON.stringify(res.data.user));
-        onLogin(res.data.user);
+        localStorage.setItem('user', JSON.stringify(userData));
+        onLogin(userData);
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please verify your credentials.');
+      setError(err.response?.data?.message || 'Admin authentication failed. Verify credentials.');
     } finally {
       setLoading(false);
     }
   };
 
-  // ─── HANDLE SIGNUP SUBMIT ───
-  const handleSignupSubmit = async (e) => {
+  // ─── ADMIN CREATE ACCOUNT SUBMIT ───
+  const handleAdminSignup = async (e) => {
     e.preventDefault();
     setError('');
     setSuccessMsg('');
@@ -74,7 +78,7 @@ export default function LoginPage({ onLogin }) {
         name: signupName.trim(),
         email: signupEmail.trim(),
         password: signupPassword,
-        role: signupRole,
+        role: 'ADMIN', // Strictly register as ADMIN
       });
 
       if (res.data.success) {
@@ -83,36 +87,31 @@ export default function LoginPage({ onLogin }) {
         onLogin(res.data.user);
       }
     } catch (err) {
-      console.error('Registration error detail:', err);
-      const serverMsg = err.response?.data?.message;
-      if (serverMsg) {
-        setError(serverMsg);
-      } else if (err.response?.status === 404) {
-        setError('Registration endpoint not found. Please restart the backend server (node src/server.js).');
-      } else {
-        setError(err.message || 'Registration failed. Please check your network and server.');
-      }
+      setError(err.response?.data?.message || 'Admin registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  // ─── 1-CLICK DEMO LOGIN ───
-  const handleQuickLogin = async (demoEmail, demoPassword) => {
-    setLoginEmail(demoEmail);
-    setLoginPassword(demoPassword);
+  // ─── 1-CLICK DEMO ADMIN LAUNCH ───
+  const handleQuickAdminDemo = async () => {
+    setLoginEmail('admin@fundsroom.com');
+    setLoginPassword('admin123');
     setError('');
     setSuccessMsg('');
     setLoading(true);
     try {
-      const res = await api.post('/auth/login', { email: demoEmail, password: demoPassword });
+      const res = await api.post('/auth/login', { 
+        email: 'admin@fundsroom.com', 
+        password: 'admin123' 
+      });
       if (res.data.success) {
         localStorage.setItem('token', res.data.token);
         localStorage.setItem('user', JSON.stringify(res.data.user));
         onLogin(res.data.user);
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Demo login failed.');
+      setError(err.response?.data?.message || 'Demo admin login failed.');
     } finally {
       setLoading(false);
     }
@@ -121,32 +120,34 @@ export default function LoginPage({ onLogin }) {
   return (
     <div className="login-page">
       <div className="auth-card-container">
-        <div className="auth-glass-card">
+        
+
+        <div className="auth-glass-card" style={{ borderTop: '4px solid #2563eb' }}>
           
           {/* Brand Header */}
           <div className="auth-header">
-            <div className="auth-logo">
-              <Sparkles size={24} />
+            <div className="auth-logo" style={{ background: '#2563eb' }}>
+              <ShieldCheck size={24} />
             </div>
-            <h2>Fundsroom ERP</h2>
-            <p>Role-Separated Enterprise Management Platform</p>
+            <h2>Admin Authentication</h2>
+            <p>Operations Command & Logistics Management</p>
           </div>
 
-          {/* Mode Tabs: Sign In / Create Account */}
+          {/* Mode Tabs: Admin Sign In / Admin Create Account */}
           <div className="auth-tabs">
             <button 
               type="button"
-              className={`auth-tab-btn ${authMode === 'login' ? 'active' : ''}`}
-              onClick={() => { setAuthMode('login'); setError(''); setSuccessMsg(''); }}
+              className={`auth-tab-btn ${mode === 'login' ? 'active' : ''}`}
+              onClick={() => { setMode('login'); setError(''); setSuccessMsg(''); }}
             >
-              <LogIn size={15} /> Sign In
+              <LogIn size={15} /> Admin Sign In
             </button>
             <button 
               type="button"
-              className={`auth-tab-btn ${authMode === 'signup' ? 'active' : ''}`}
-              onClick={() => { setAuthMode('signup'); setError(''); setSuccessMsg(''); }}
+              className={`auth-tab-btn ${mode === 'signup' ? 'active' : ''}`}
+              onClick={() => { setMode('signup'); setError(''); setSuccessMsg(''); }}
             >
-              <UserPlus size={15} /> Create Account
+              <UserPlus size={15} /> Admin Register
             </button>
           </div>
 
@@ -188,75 +189,53 @@ export default function LoginPage({ onLogin }) {
           )}
 
           {/* ═════════════════════════════════════════════════════════ */}
-          {/*  FORM 1: SIGN IN                                          */}
+          {/*  FORM 1: ADMIN SIGN IN                                    */}
           {/* ═════════════════════════════════════════════════════════ */}
-          {authMode === 'login' && (
+          {mode === 'login' && (
             <div>
-              {/* 1-Click Fast Demo Launchers */}
+              {/* 1-Click Fast Admin Demo */}
               <div style={{ marginBottom: '20px' }}>
-                <div style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.6px', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '10px' }}>
-                  ⚡ Quick Demo Launchers (1-Click)
-                </div>
-                
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                  {/* Admin Demo Button */}
-                  <div 
-                    onClick={() => handleQuickLogin('admin@fundsroom.com', 'admin123')}
-                    style={{
-                      padding: '12px',
-                      borderRadius: 'var(--radius-sm)',
-                      background: '#eff6ff',
-                      border: '1px solid #bfdbfe',
-                      cursor: 'pointer',
-                      transition: 'var(--transition)',
-                      textAlign: 'left'
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.borderColor = '#2563eb'}
-                    onMouseLeave={(e) => e.currentTarget.style.borderColor = '#bfdbfe'}
-                  >
+                <div 
+                  onClick={handleQuickAdminDemo}
+                  style={{
+                    padding: '12px 14px',
+                    borderRadius: 'var(--radius-sm)',
+                    background: '#eff6ff',
+                    border: '1px solid #bfdbfe',
+                    cursor: 'pointer',
+                    transition: 'var(--transition)',
+                    textAlign: 'left',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.borderColor = '#2563eb'}
+                  onMouseLeave={(e) => e.currentTarget.style.borderColor = '#bfdbfe'}
+                >
+                  <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#1d4ed8', fontWeight: 700, fontSize: '13px' }}>
-                      <ShieldCheck size={16} color="#2563eb" /> Admin Demo
+                      <ShieldCheck size={16} color="#2563eb" /> Quick 1-Click Admin Demo
                     </div>
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                      Inventory & Dispatches
+                      admin@fundsroom.com · Instant Access
                     </div>
                   </div>
-
-                  {/* Sales Demo Button */}
-                  <div 
-                    onClick={() => handleQuickLogin('sales@fundsroom.com', 'sales123')}
-                    style={{
-                      padding: '12px',
-                      borderRadius: 'var(--radius-sm)',
-                      background: '#ecfdf5',
-                      border: '1px solid #a7f3d0',
-                      cursor: 'pointer',
-                      transition: 'var(--transition)',
-                      textAlign: 'left'
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.borderColor = '#059669'}
-                    onMouseLeave={(e) => e.currentTarget.style.borderColor = '#a7f3d0'}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#047857', fontWeight: 700, fontSize: '13px' }}>
-                      <Target size={16} color="#059669" /> Sales Demo
-                    </div>
-                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                      Leads, Quotes & Deals
-                    </div>
-                  </div>
+                  <span style={{ fontSize: '11px', background: '#2563eb', color: '#ffffff', padding: '3px 8px', borderRadius: '4px', fontWeight: 700 }}>
+                    Auto-fill
+                  </span>
                 </div>
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '16px 0' }}>
                 <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
-                <span style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>or sign in with credentials</span>
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>or sign in with admin email</span>
                 <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }} />
               </div>
 
-              <form onSubmit={handleLoginSubmit}>
+              <form onSubmit={handleAdminLogin}>
                 <div className="form-group">
                   <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Mail size={13} color="var(--accent-primary)" /> Email Address
+                    <Mail size={13} color="#2563eb" /> Administrator Email
                   </label>
                   <input
                     type="email"
@@ -270,7 +249,7 @@ export default function LoginPage({ onLogin }) {
 
                 <div className="form-group">
                   <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Lock size={13} color="var(--accent-primary)" /> Password
+                    <Lock size={13} color="#2563eb" /> Password
                   </label>
                   <div className="password-input-wrap">
                     <input
@@ -295,28 +274,28 @@ export default function LoginPage({ onLogin }) {
                 <button 
                   type="submit" 
                   className="btn btn-primary" 
-                  style={{ width: '100%', justifyContent: 'center', marginTop: '10px', padding: '13px' }} 
+                  style={{ width: '100%', justifyContent: 'center', marginTop: '10px', padding: '12px' }} 
                   disabled={loading}
                 >
-                  <LogIn size={17} /> {loading ? 'Signing In...' : 'Sign In to Workspace'}
+                  <LogIn size={16} /> {loading ? 'Authenticating Admin...' : 'Sign In to Admin Dashboard'}
                 </button>
               </form>
             </div>
           )}
 
           {/* ═════════════════════════════════════════════════════════ */}
-          {/*  FORM 2: CREATE ACCOUNT (SIGN UP)                        */}
+          {/*  FORM 2: ADMIN CREATE ACCOUNT                             */}
           {/* ═════════════════════════════════════════════════════════ */}
-          {authMode === 'signup' && (
-            <form onSubmit={handleSignupSubmit}>
+          {mode === 'signup' && (
+            <form onSubmit={handleAdminSignup}>
               <div className="form-group">
                 <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <User size={13} color="var(--accent-primary)" /> Full Name
+                  <User size={13} color="#2563eb" /> Administrator Full Name
                 </label>
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="e.g. John Doe"
+                  placeholder="e.g. Operations Manager"
                   value={signupName}
                   onChange={(e) => setSignupName(e.target.value)}
                   required
@@ -325,12 +304,12 @@ export default function LoginPage({ onLogin }) {
 
               <div className="form-group">
                 <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Mail size={13} color="var(--accent-primary)" /> Work Email
+                  <Mail size={13} color="#2563eb" /> Official Admin Email
                 </label>
                 <input
                   type="email"
                   className="form-control"
-                  placeholder="name@company.com"
+                  placeholder="admin@company.com"
                   value={signupEmail}
                   onChange={(e) => setSignupEmail(e.target.value)}
                   required
@@ -339,7 +318,7 @@ export default function LoginPage({ onLogin }) {
 
               <div className="form-group">
                 <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <Lock size={13} color="var(--accent-primary)" /> Password
+                  <Lock size={13} color="#2563eb" /> Secure Password
                 </label>
                 <div className="password-input-wrap">
                   <input
@@ -361,34 +340,21 @@ export default function LoginPage({ onLogin }) {
                 </div>
               </div>
 
-              {/* Role Selection Cards */}
-              <div className="form-group">
-                <label className="form-label">Select Workspace Role</label>
-                <div className="role-radio-group">
-                  <div 
-                    className={`role-radio-card ${signupRole === 'ADMIN' ? 'selected-admin' : ''}`}
-                    onClick={() => setSignupRole('ADMIN')}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700, fontSize: '13px', color: signupRole === 'ADMIN' ? '#1d4ed8' : '#334155' }}>
-                      <ShieldCheck size={16} color={signupRole === 'ADMIN' ? '#2563eb' : '#64748b'} /> Administrator
-                    </div>
-                    <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                      Inventory & dispatch execution
-                    </div>
-                  </div>
-
-                  <div 
-                    className={`role-radio-card ${signupRole === 'SALES_USER' ? 'selected-sales' : ''}`}
-                    onClick={() => setSignupRole('SALES_USER')}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 700, fontSize: '13px', color: signupRole === 'SALES_USER' ? '#047857' : '#334155' }}>
-                      <Briefcase size={16} color={signupRole === 'SALES_USER' ? '#059669' : '#64748b'} /> Sales Rep
-                    </div>
-                    <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                      Enquiry & quote management
-                    </div>
-                  </div>
-                </div>
+              {/* Automatic Role Notice */}
+              <div style={{
+                padding: '10px 12px',
+                background: '#eff6ff',
+                border: '1px solid #bfdbfe',
+                borderRadius: 'var(--radius-sm)',
+                marginBottom: '16px',
+                fontSize: '12px',
+                color: '#1d4ed8',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <ShieldCheck size={16} style={{ flexShrink: 0 }} />
+                <span>Account will be provisioned with <strong>ADMINISTRATOR</strong> authority.</span>
               </div>
 
               <button 
@@ -397,31 +363,31 @@ export default function LoginPage({ onLogin }) {
                 style={{ width: '100%', justifyContent: 'center', marginTop: '6px', padding: '12px' }} 
                 disabled={loading}
               >
-                <UserPlus size={17} /> {loading ? 'Creating Account...' : 'Create My Account'}
+                <UserPlus size={16} /> {loading ? 'Registering Admin...' : 'Create Admin Account & Launch'}
               </button>
             </form>
           )}
 
           {/* Switch Prompt */}
-          <div style={{ textAlign: 'center', marginTop: '18px', fontSize: '13px', color: 'var(--text-muted)' }}>
-            {authMode === 'login' ? (
+          <div style={{ textAlign: 'center', marginTop: '18px', fontSize: '12.5px', color: 'var(--text-muted)' }}>
+            {mode === 'login' ? (
               <span>
-                Don't have an account?{' '}
+                Need new administrator access?{' '}
                 <strong 
                   style={{ color: '#2563eb', cursor: 'pointer', textDecoration: 'underline' }}
-                  onClick={() => { setAuthMode('signup'); setError(''); }}
+                  onClick={() => { setMode('signup'); setError(''); }}
                 >
-                  Create one now
+                  Create Admin Account
                 </strong>
               </span>
             ) : (
               <span>
-                Already have an account?{' '}
+                Already an administrator?{' '}
                 <strong 
                   style={{ color: '#2563eb', cursor: 'pointer', textDecoration: 'underline' }}
-                  onClick={() => { setAuthMode('login'); setError(''); }}
+                  onClick={() => { setMode('login'); setError(''); }}
                 >
-                  Sign in
+                  Sign In
                 </strong>
               </span>
             )}

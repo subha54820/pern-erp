@@ -19,7 +19,8 @@ import {
   Briefcase
 } from 'lucide-react';
 import api from './api';
-import LoginPage from './pages/LoginPage';
+import AdminLoginPage from './pages/AdminLoginPage';
+import SalesLoginPage from './pages/SalesLoginPage';
 import DashboardPage from './pages/DashboardPage';
 import EnquiriesPage from './pages/EnquiriesPage';
 import QuotationsPage from './pages/QuotationsPage';
@@ -27,12 +28,16 @@ import OrdersPage from './pages/OrdersPage';
 
 export default function App() {
   const [user, setUser] = useState(null);
+  const [authView, setAuthView] = useState(() => {
+    if (window.location.pathname.startsWith('/sales')) return 'sales';
+    return 'admin';
+  });
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [ordersTab, setOrdersTab] = useState('orders');
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
 
   useEffect(() => {
-    // Ensure application always starts on Login page when opened/launched
+    // Ensure application starts on Portal Selection landing page when opened/launched
     localStorage.removeItem('token');
     localStorage.removeItem('user');
 
@@ -70,7 +75,10 @@ export default function App() {
   };
 
   if (!user) {
-    return <LoginPage onLogin={handleLogin} />;
+    if (authView === 'admin') {
+      return <AdminLoginPage onLogin={handleLogin} />;
+    }
+    return <SalesLoginPage onLogin={handleLogin} />;
   }
 
   const isAdmin = user.role === 'ADMIN';
@@ -190,14 +198,14 @@ export default function App() {
   return (
     <div className="app-layout">
       {/* Sidebar Navigation — COMPLETELY DIFFERENT PER ROLE */}
-      <aside className="sidebar" style={{ borderRight: isAdmin ? '1px solid rgba(99, 102, 241, 0.15)' : '1px solid rgba(16, 185, 129, 0.15)' }}>
+      <aside className="sidebar">
         <div className="sidebar-brand">
-          <div className="brand-icon" style={{ background: isAdmin ? 'rgba(99, 102, 241, 0.2)' : 'rgba(16, 185, 129, 0.2)' }}>
-            {isAdmin ? <ShieldCheck size={22} color="#818cf8" /> : <Sparkles size={22} color="#34d399" />}
+          <div className="brand-icon" style={{ background: isAdmin ? '#2563eb' : '#059669', color: '#ffffff' }}>
+            {isAdmin ? <ShieldCheck size={22} color="#ffffff" /> : <Sparkles size={22} color="#ffffff" />}
           </div>
           <div className="brand-info">
             <h2>{isAdmin ? 'Admin Console' : 'Sales Console'}</h2>
-            <span style={{ color: isAdmin ? '#a5b4fc' : '#6ee7b7', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <span style={{ color: isAdmin ? '#2563eb' : '#059669', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               {isAdmin ? '🛡️ System Management' : '💼 Customer Sales'}
             </span>
           </div>
@@ -212,7 +220,11 @@ export default function App() {
                   key={item.id}
                   className={`nav-item ${activeNavId === item.id ? 'active' : ''}`}
                   onClick={() => handleNav(item.id)}
-                  style={activeNavId === item.id ? { borderLeft: isAdmin ? '3px solid #818cf8' : '3px solid #34d399' } : {}}
+                  style={activeNavId === item.id ? { 
+                    borderLeft: isAdmin ? '3px solid #2563eb' : '3px solid #059669',
+                    background: isAdmin ? '#eff6ff' : '#ecfdf5',
+                    color: isAdmin ? '#1d4ed8' : '#047857'
+                  } : {}}
                 >
                   <item.icon size={18} />
                   <span>{item.label}</span>
@@ -224,13 +236,17 @@ export default function App() {
 
         <div className="sidebar-footer">
           <div className="user-card">
-            <div className="user-avatar" style={{ background: isAdmin ? 'linear-gradient(135deg, #6366f1, #8b5cf6)' : 'linear-gradient(135deg, #10b981, #06b6d4)' }}>
+            <div className="user-avatar" style={{ background: isAdmin ? '#2563eb' : '#059669' }}>
               {initials}
             </div>
             <div className="user-meta">
               <div className="user-name">{user.name}</div>
-              <div className="user-role-badge">
-                <span className="badge-dot" style={{ background: isAdmin ? '#818cf8' : '#34d399' }} />
+              <div className="user-role-badge" style={{ 
+                background: isAdmin ? '#eff6ff' : '#ecfdf5',
+                color: isAdmin ? '#1d4ed8' : '#047857',
+                border: isAdmin ? '1px solid #bfdbfe' : '1px solid #a7f3d0'
+              }}>
+                <span className="badge-dot" style={{ background: isAdmin ? '#2563eb' : '#059669' }} />
                 {isAdmin ? 'ADMINISTRATOR' : 'SALES REP'}
               </div>
             </div>
@@ -246,7 +262,7 @@ export default function App() {
         <header className="top-navbar">
           <div className="top-nav-left">
             <div className="breadcrumb">
-              <span style={{ color: isAdmin ? '#a5b4fc' : '#6ee7b7' }}>
+              <span style={{ color: isAdmin ? '#2563eb' : '#059669', fontWeight: 600 }}>
                 {isAdmin ? '🛡️ Admin' : '💼 Sales'}
               </span>
               <ChevronRight size={14} />

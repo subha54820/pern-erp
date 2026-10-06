@@ -123,21 +123,21 @@ export default function DashboardPage({ user, onNavigate }) {
   // ─── STATUS BADGE HELPER ───
   const StatusBadge = ({ status }) => {
     const colors = {
-      CREATED: { bg: 'rgba(250, 204, 21, 0.15)', color: '#facc15' },
-      CONFIRMED: { bg: 'rgba(59, 130, 246, 0.15)', color: '#60a5fa' },
-      RESERVED: { bg: 'rgba(139, 92, 246, 0.15)', color: '#a78bfa' },
-      DISPATCHED: { bg: 'rgba(16, 185, 129, 0.15)', color: '#34d399' },
-      CANCELLED: { bg: 'rgba(239, 68, 68, 0.15)', color: '#f87171' },
-      ACCEPTED: { bg: 'rgba(16, 185, 129, 0.15)', color: '#34d399' },
-      REJECTED: { bg: 'rgba(239, 68, 68, 0.15)', color: '#f87171' },
-      DRAFT: { bg: 'rgba(148, 163, 184, 0.15)', color: '#94a3b8' },
+      CREATED: { bg: '#fffbeb', color: '#b45309', border: '#fde68a' },
+      CONFIRMED: { bg: '#eff6ff', color: '#1d4ed8', border: '#bfdbfe' },
+      RESERVED: { bg: '#f5f3ff', color: '#6d28d9', border: '#ddd6fe' },
+      DISPATCHED: { bg: '#ecfdf5', color: '#047857', border: '#a7f3d0' },
+      CANCELLED: { bg: '#fef2f2', color: '#b91c1c', border: '#fecaca' },
+      ACCEPTED: { bg: '#ecfdf5', color: '#047857', border: '#a7f3d0' },
+      REJECTED: { bg: '#fef2f2', color: '#b91c1c', border: '#fecaca' },
+      DRAFT: { bg: '#f1f5f9', color: '#475569', border: '#e2e8f0' },
     };
     const c = colors[status] || colors.DRAFT;
     return (
       <span style={{ 
-        display: 'inline-flex', alignItems: 'center', gap: '4px',
+        display: 'inline-flex', alignItems: 'center', gap: '5px',
         padding: '3px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 700,
-        background: c.bg, color: c.color, letterSpacing: '0.3px'
+        background: c.bg, color: c.color, border: `1px solid ${c.border}`, letterSpacing: '0.3px'
       }}>
         <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: c.color }} />
         {status}
@@ -150,7 +150,7 @@ export default function DashboardPage({ user, onNavigate }) {
     <div className="kpi-card">
       <div className="kpi-header">
         <span className="kpi-title">{label}</span>
-        <div className="kpi-icon-wrap" style={{ background: iconBg || 'rgba(99, 102, 241, 0.15)', color: iconColor || '#818cf8' }}>
+        <div className="kpi-icon-wrap" style={{ background: iconBg || '#eff6ff', color: iconColor || '#2563eb' }}>
           <Icon size={18} />
         </div>
       </div>
@@ -169,25 +169,25 @@ export default function DashboardPage({ user, onNavigate }) {
       <div>
         {/* Admin Welcome Banner */}
         <div style={{
-          background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.15))',
-          border: '1px solid rgba(99, 102, 241, 0.4)',
-          borderRadius: 'var(--radius-xl)',
-          padding: '28px 32px',
+          background: 'linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%)',
+          border: '1px solid #bfdbfe',
+          borderRadius: 'var(--radius-lg)',
+          padding: '24px 28px',
           marginBottom: '24px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+          boxShadow: 'var(--shadow-sm)'
         }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#818cf8', fontWeight: 700, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#2563eb', fontWeight: 700, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
               <ShieldCheck size={16} /> 🛡️ SYSTEM ADMINISTRATION CONSOLE
             </div>
-            <h1 style={{ fontSize: '26px', fontWeight: 800, color: '#ffffff', marginTop: '6px' }}>
+            <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '4px' }}>
               Operations Command Center
             </h1>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginTop: '4px' }}>
-              Manage orders, inventory stock, dispatches, and monitor system health. Your responsibility: everything after quotation acceptance.
+            <p style={{ color: 'var(--text-secondary)', fontSize: '13.5px', marginTop: '4px' }}>
+              Manage orders, inventory stock, dispatches, and monitor system health. Everything after quotation acceptance.
             </p>
           </div>
           <div style={{ display: 'flex', gap: '10px' }}>
@@ -205,58 +205,58 @@ export default function DashboardPage({ user, onNavigate }) {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', marginBottom: '24px' }}>
             {pendingConfirmation > 0 && (
               <div onClick={() => onNavigate('orders', 'orders')} style={{
-                padding: '16px', borderRadius: 'var(--radius-md)', cursor: 'pointer',
-                background: 'rgba(250, 204, 21, 0.08)', border: '1px solid rgba(250, 204, 21, 0.3)',
+                padding: '16px', borderRadius: 'var(--radius-sm)', cursor: 'pointer',
+                background: '#fffbeb', border: '1px solid #fde68a',
                 transition: 'var(--transition)'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                  <AlertTriangle size={16} color="#facc15" />
-                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#facc15', textTransform: 'uppercase' }}>Pending Confirmation</span>
+                  <AlertTriangle size={16} color="#d97706" />
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#b45309', textTransform: 'uppercase' }}>Pending Confirmation</span>
                 </div>
-                <div style={{ fontSize: '28px', fontWeight: 800, color: '#fbbf24', fontFamily: 'var(--font-mono)' }}>{pendingConfirmation}</div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>Orders awaiting admin approval</div>
+                <div style={{ fontSize: '26px', fontWeight: 800, color: '#92400e', fontFamily: 'var(--font-mono)' }}>{pendingConfirmation}</div>
+                <div style={{ fontSize: '11px', color: '#78350f', marginTop: '2px' }}>Orders awaiting admin approval</div>
               </div>
             )}
             {readyToReserve > 0 && (
               <div onClick={() => onNavigate('orders', 'inventory')} style={{
-                padding: '16px', borderRadius: 'var(--radius-md)', cursor: 'pointer',
-                background: 'rgba(59, 130, 246, 0.08)', border: '1px solid rgba(59, 130, 246, 0.3)',
+                padding: '16px', borderRadius: 'var(--radius-sm)', cursor: 'pointer',
+                background: '#eff6ff', border: '1px solid #bfdbfe',
                 transition: 'var(--transition)'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                  <Package size={16} color="#60a5fa" />
-                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#60a5fa', textTransform: 'uppercase' }}>Ready to Reserve</span>
+                  <Package size={16} color="#2563eb" />
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#1d4ed8', textTransform: 'uppercase' }}>Ready to Reserve</span>
                 </div>
-                <div style={{ fontSize: '28px', fontWeight: 800, color: '#60a5fa', fontFamily: 'var(--font-mono)' }}>{readyToReserve}</div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>Confirmed orders need stock allocation</div>
+                <div style={{ fontSize: '26px', fontWeight: 800, color: '#1e40af', fontFamily: 'var(--font-mono)' }}>{readyToReserve}</div>
+                <div style={{ fontSize: '11px', color: '#1e3a8a', marginTop: '2px' }}>Confirmed orders need stock allocation</div>
               </div>
             )}
             {readyToDispatch > 0 && (
               <div onClick={() => onNavigate('orders', 'dispatches')} style={{
-                padding: '16px', borderRadius: 'var(--radius-md)', cursor: 'pointer',
-                background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.3)',
+                padding: '16px', borderRadius: 'var(--radius-sm)', cursor: 'pointer',
+                background: '#ecfdf5', border: '1px solid #a7f3d0',
                 transition: 'var(--transition)'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                  <Truck size={16} color="#34d399" />
-                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#34d399', textTransform: 'uppercase' }}>Ready to Dispatch</span>
+                  <Truck size={16} color="#059669" />
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#047857', textTransform: 'uppercase' }}>Ready to Dispatch</span>
                 </div>
-                <div style={{ fontSize: '28px', fontWeight: 800, color: '#34d399', fontFamily: 'var(--font-mono)' }}>{readyToDispatch}</div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>Reserved orders ready for shipment</div>
+                <div style={{ fontSize: '26px', fontWeight: 800, color: '#065f46', fontFamily: 'var(--font-mono)' }}>{readyToDispatch}</div>
+                <div style={{ fontSize: '11px', color: '#064e3b', marginTop: '2px' }}>Reserved orders ready for shipment</div>
               </div>
             )}
             {lowStockItems.length > 0 && (
               <div onClick={() => onNavigate('orders', 'inventory')} style={{
-                padding: '16px', borderRadius: 'var(--radius-md)', cursor: 'pointer',
-                background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.3)',
+                padding: '16px', borderRadius: 'var(--radius-sm)', cursor: 'pointer',
+                background: '#fef2f2', border: '1px solid #fecaca',
                 transition: 'var(--transition)'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                  <AlertTriangle size={16} color="#f87171" />
-                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#f87171', textTransform: 'uppercase' }}>Low Stock Alert</span>
+                  <AlertTriangle size={16} color="#dc2626" />
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#b91c1c', textTransform: 'uppercase' }}>Low Stock Alert</span>
                 </div>
-                <div style={{ fontSize: '28px', fontWeight: 800, color: '#f87171', fontFamily: 'var(--font-mono)' }}>{lowStockItems.length}</div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>Products below threshold (&lt;20 units)</div>
+                <div style={{ fontSize: '26px', fontWeight: 800, color: '#991b1b', fontFamily: 'var(--font-mono)' }}>{lowStockItems.length}</div>
+                <div style={{ fontSize: '11px', color: '#7f1d1d', marginTop: '2px' }}>Products below threshold (&lt;20 units)</div>
               </div>
             )}
           </div>
@@ -264,10 +264,10 @@ export default function DashboardPage({ user, onNavigate }) {
 
         {/* ─── ADMIN KPI CARDS — Operations Focus ─── */}
         <div className="kpi-grid">
-          <KpiCard icon={ShieldCheck} label="Total Orders" value={stats.orders} subtitle={`${stats.confirmedOrders} confirmed · ${stats.cancelledOrders} cancelled`} iconBg="rgba(99, 102, 241, 0.15)" iconColor="#818cf8" accentColor="#a5b4fc" />
-          <KpiCard icon={Package} label="Stock Reserved" value={stats.reservedStock} subtitle={`${stockUtilization}% of total physical stock`} iconBg="rgba(245, 158, 11, 0.15)" iconColor="#f59e0b" accentColor="#fbbf24" />
-          <KpiCard icon={Truck} label="Dispatches" value={stats.dispatches} subtitle={`${stats.dispatchedOrders} orders fulfilled`} iconBg="rgba(16, 185, 129, 0.15)" iconColor="#34d399" accentColor="#6ee7b7" />
-          <KpiCard icon={Activity} label="Available Stock" value={availableStock} subtitle={`${stats.products} products tracked`} iconBg="rgba(139, 92, 246, 0.15)" iconColor="#a78bfa" accentColor="#c4b5fd" />
+          <KpiCard icon={ShieldCheck} label="Total Orders" value={stats.orders} subtitle={`${stats.confirmedOrders} confirmed · ${stats.cancelledOrders} cancelled`} iconBg="#eff6ff" iconColor="#2563eb" accentColor="#1d4ed8" />
+          <KpiCard icon={Package} label="Stock Reserved" value={stats.reservedStock} subtitle={`${stockUtilization}% of total physical stock`} iconBg="#fffbeb" iconColor="#d97706" accentColor="#b45309" />
+          <KpiCard icon={Truck} label="Dispatches" value={stats.dispatches} subtitle={`${stats.dispatchedOrders} orders fulfilled`} iconBg="#ecfdf5" iconColor="#059669" accentColor="#047857" />
+          <KpiCard icon={Activity} label="Available Stock" value={availableStock} subtitle={`${stats.products} products tracked`} iconBg="#f5f3ff" iconColor="#7c3aed" accentColor="#6d28d9" />
         </div>
 
         {/* ─── ADMIN BOTTOM GRID: Inventory Health + Order Queue ─── */}
@@ -275,18 +275,18 @@ export default function DashboardPage({ user, onNavigate }) {
 
           {/* Inventory Health Monitor */}
           <div className="glass-panel" style={{ padding: '24px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '6px', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Package size={18} color="#34d399" /> Inventory Health Monitor
+            <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Package size={18} color="#059669" /> Inventory Health Monitor
             </h3>
             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px' }}>
               Physical vs Reserved stock levels across all products
             </p>
 
             {/* Utilization Bar */}
-            <div style={{ marginBottom: '20px', padding: '16px', background: 'rgba(0, 0, 0, 0.25)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
+            <div style={{ marginBottom: '20px', padding: '16px', background: '#f8fafc', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '8px' }}>
-                <span style={{ color: 'var(--text-secondary)' }}>Stock Utilization</span>
-                <span style={{ fontWeight: 700, color: stockUtilization > 75 ? '#f43f5e' : '#34d399' }}>
+                <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>Stock Utilization</span>
+                <span style={{ fontWeight: 700, color: stockUtilization > 75 ? '#dc2626' : '#059669' }}>
                   {stockUtilization}% Reserved
                 </span>
               </div>
@@ -299,15 +299,15 @@ export default function DashboardPage({ user, onNavigate }) {
               <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '12px', fontSize: '12px' }}>
                 <div>
                   <span style={{ color: 'var(--text-muted)' }}>Physical: </span>
-                  <strong style={{ color: '#ffffff', fontFamily: 'var(--font-mono)' }}>{stats.totalStock}</strong>
+                  <strong style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>{stats.totalStock}</strong>
                 </div>
                 <div>
                   <span style={{ color: 'var(--text-muted)' }}>Reserved: </span>
-                  <strong style={{ color: '#f59e0b', fontFamily: 'var(--font-mono)' }}>{stats.reservedStock}</strong>
+                  <strong style={{ color: '#d97706', fontFamily: 'var(--font-mono)' }}>{stats.reservedStock}</strong>
                 </div>
                 <div>
                   <span style={{ color: 'var(--text-muted)' }}>Available: </span>
-                  <strong style={{ color: '#10b981', fontFamily: 'var(--font-mono)' }}>{availableStock}</strong>
+                  <strong style={{ color: '#059669', fontFamily: 'var(--font-mono)' }}>{availableStock}</strong>
                 </div>
               </div>
             </div>
@@ -315,13 +315,13 @@ export default function DashboardPage({ user, onNavigate }) {
             {/* Product Inventory List */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '220px', overflowY: 'auto' }}>
               {inventoryList.slice(0, 6).map((item, idx) => (
-                <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: 'rgba(255, 255, 255, 0.02)', borderRadius: 'var(--radius-sm)', border: Number(item.available_stock || 0) < 20 ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid transparent' }}>
+                <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: '#f8fafc', borderRadius: 'var(--radius-xs)', border: Number(item.available_stock || 0) < 20 ? '1px solid #fecaca' : '1px solid var(--border-subtle)' }}>
                   <div>
-                    <div style={{ fontSize: '13px', fontWeight: 600, color: '#f1f5f9' }}>{item.product_name}</div>
+                    <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{item.product_name}</div>
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{item.sku}</div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: '13px', fontWeight: 700, color: Number(item.available_stock || 0) < 20 ? '#f87171' : '#34d399', fontFamily: 'var(--font-mono)' }}>
+                    <div style={{ fontSize: '13px', fontWeight: 700, color: Number(item.available_stock || 0) < 20 ? '#dc2626' : '#059669', fontFamily: 'var(--font-mono)' }}>
                       {item.available_stock} avail
                     </div>
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
@@ -339,8 +339,8 @@ export default function DashboardPage({ user, onNavigate }) {
 
           {/* Order Processing Queue */}
           <div className="glass-panel" style={{ padding: '24px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '6px', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Activity size={18} color="#818cf8" /> Order Processing Queue
+            <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Activity size={18} color="#2563eb" /> Order Processing Queue
             </h3>
             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px' }}>
               Recent orders requiring admin action
@@ -349,15 +349,15 @@ export default function DashboardPage({ user, onNavigate }) {
             {/* Status Summary Bar */}
             <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
               {[
-                { label: 'Created', count: stats.createdOrders, color: '#facc15' },
-                { label: 'Confirmed', count: stats.confirmedOrders, color: '#60a5fa' },
-                { label: 'Reserved', count: stats.reservedOrders, color: '#a78bfa' },
-                { label: 'Dispatched', count: stats.dispatchedOrders, color: '#34d399' },
-                { label: 'Cancelled', count: stats.cancelledOrders, color: '#f87171' },
+                { label: 'Created', count: stats.createdOrders, color: '#d97706' },
+                { label: 'Confirmed', count: stats.confirmedOrders, color: '#2563eb' },
+                { label: 'Reserved', count: stats.reservedOrders, color: '#7c3aed' },
+                { label: 'Dispatched', count: stats.dispatchedOrders, color: '#059669' },
+                { label: 'Cancelled', count: stats.cancelledOrders, color: '#dc2626' },
               ].map((s, idx) => (
                 <div key={idx} style={{
                   display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 10px',
-                  background: 'rgba(255, 255, 255, 0.03)', borderRadius: '20px', fontSize: '11px', fontWeight: 600
+                  background: '#f8fafc', border: '1px solid var(--border-subtle)', borderRadius: '20px', fontSize: '11.5px', fontWeight: 600
                 }}>
                   <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: s.color }} />
                   <span style={{ color: 'var(--text-muted)' }}>{s.label}:</span>
@@ -371,10 +371,10 @@ export default function DashboardPage({ user, onNavigate }) {
               {recentOrders.map((order, idx) => (
                 <div key={idx} style={{
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                  padding: '10px 14px', background: 'rgba(255, 255, 255, 0.02)', borderRadius: 'var(--radius-sm)'
+                  padding: '10px 14px', background: '#f8fafc', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-xs)'
                 }}>
                   <div>
-                    <div style={{ fontSize: '13px', fontWeight: 600, color: '#f1f5f9', fontFamily: 'var(--font-mono)' }}>
+                    <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
                       {order.order_number}
                     </div>
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
@@ -398,26 +398,26 @@ export default function DashboardPage({ user, onNavigate }) {
         </div>
 
         {/* ─── ADMIN WORKFLOW PIPELINE ─── */}
-        <div className="glass-panel" style={{ padding: '24px', borderLeft: '4px solid #818cf8' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Zap size={18} color="#818cf8" /> Admin Workflow Pipeline
+        <div className="glass-panel" style={{ padding: '24px', borderLeft: '4px solid #2563eb' }}>
+          <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Zap size={18} color="#2563eb" /> Admin Workflow Pipeline
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
             {[
-              { step: '1. Confirm Orders', desc: 'Review new sales orders from Sales team, validate line items, and approve for stock reservation.', icon: ShieldCheck, route: 'orders', tab: 'orders', color: '#60a5fa' },
-              { step: '2. Reserve Inventory', desc: 'Allocate physical stock to confirmed orders. Check availability (Physical - Reserved) before locking.', icon: Package, route: 'orders', tab: 'inventory', color: '#a78bfa' },
-              { step: '3. Process Dispatch', desc: 'Execute final shipment. Deducts both physical and reserved stock. Generate dispatch confirmation.', icon: Truck, route: 'orders', tab: 'dispatches', color: '#34d399' },
+              { step: '1. Confirm Orders', desc: 'Review new sales orders from Sales team, validate line items, and approve for stock reservation.', icon: ShieldCheck, route: 'orders', tab: 'orders', color: '#2563eb' },
+              { step: '2. Reserve Inventory', desc: 'Allocate physical stock to confirmed orders. Check availability (Physical - Reserved) before locking.', icon: Package, route: 'orders', tab: 'inventory', color: '#7c3aed' },
+              { step: '3. Process Dispatch', desc: 'Execute final shipment. Deducts both physical and reserved stock. Generate dispatch confirmation.', icon: Truck, route: 'orders', tab: 'dispatches', color: '#059669' },
             ].map((item, idx) => (
               <div key={idx} onClick={() => onNavigate(item.route, item.tab)} style={{
-                padding: '20px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid var(--border-subtle)',
-                borderRadius: 'var(--radius-md)', cursor: 'pointer', transition: 'var(--transition)',
+                padding: '18px', background: '#f8fafc', border: '1px solid var(--border-subtle)',
+                borderRadius: 'var(--radius-sm)', cursor: 'pointer', transition: 'var(--transition)',
                 borderTop: `3px solid ${item.color}`
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                  <item.icon size={20} color={item.color} />
-                  <span style={{ fontWeight: 700, fontSize: '14px', color: '#ffffff' }}>{item.step}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                  <item.icon size={18} color={item.color} />
+                  <span style={{ fontWeight: 700, fontSize: '13.5px', color: 'var(--text-primary)' }}>{item.step}</span>
                 </div>
-                <p style={{ fontSize: '12.5px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>{item.desc}</p>
+                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>{item.desc}</p>
               </div>
             ))}
           </div>
@@ -433,24 +433,24 @@ export default function DashboardPage({ user, onNavigate }) {
     <div>
       {/* Sales Welcome Banner */}
       <div style={{
-        background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(6, 182, 212, 0.15))',
-        border: '1px solid rgba(16, 185, 129, 0.4)',
-        borderRadius: 'var(--radius-xl)',
-        padding: '28px 32px',
+        background: 'linear-gradient(135deg, #ecfdf5 0%, #f8fafc 100%)',
+        border: '1px solid #a7f3d0',
+        borderRadius: 'var(--radius-lg)',
+        padding: '24px 28px',
         marginBottom: '24px',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
+        boxShadow: 'var(--shadow-sm)'
       }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#34d399', fontWeight: 700, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#059669', fontWeight: 700, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
             <Target size={16} /> 💼 SALES REPRESENTATIVE WORKSPACE
           </div>
-          <h1 style={{ fontSize: '26px', fontWeight: 800, color: '#ffffff', marginTop: '6px' }}>
+          <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '4px' }}>
             Sales Pipeline Dashboard
           </h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginTop: '4px' }}>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '13.5px', marginTop: '4px' }}>
             Capture enquiries, build winning quotations, and convert deals into sales orders. Track your pipeline performance.
           </p>
         </div>
@@ -466,10 +466,10 @@ export default function DashboardPage({ user, onNavigate }) {
 
       {/* ─── SALES KPI CARDS — Pipeline Focus ─── */}
       <div className="kpi-grid">
-        <KpiCard icon={FileText} label="Enquiries Captured" value={stats.enquiries} subtitle="Active prospect requests" iconBg="rgba(99, 102, 241, 0.15)" iconColor="#818cf8" accentColor="#a5b4fc" />
-        <KpiCard icon={Receipt} label="Quotations Sent" value={stats.quotations} subtitle={`${stats.acceptedQuotations} accepted · ${stats.rejectedQuotations} rejected`} iconBg="rgba(6, 182, 212, 0.15)" iconColor="#22d3ee" accentColor="#67e8f9" />
-        <KpiCard icon={Target} label="Conversion Rate" value={`${conversionRate}%`} subtitle={`${stats.acceptedQuotations} of ${stats.quotations} quotes won`} iconBg="rgba(16, 185, 129, 0.15)" iconColor="#34d399" accentColor="#6ee7b7" />
-        <KpiCard icon={Briefcase} label="Orders Created" value={stats.orders} subtitle={`${stats.dispatchedOrders} shipped · ${stats.cancelledOrders} lost`} iconBg="rgba(245, 158, 11, 0.15)" iconColor="#f59e0b" accentColor="#fbbf24" />
+        <KpiCard icon={FileText} label="Enquiries Captured" value={stats.enquiries} subtitle="Active prospect requests" iconBg="#eff6ff" iconColor="#2563eb" accentColor="#1d4ed8" />
+        <KpiCard icon={Receipt} label="Quotations Sent" value={stats.quotations} subtitle={`${stats.acceptedQuotations} accepted · ${stats.rejectedQuotations} rejected`} iconBg="#f0f9ff" iconColor="#0284c7" accentColor="#0369a1" />
+        <KpiCard icon={Target} label="Conversion Rate" value={`${conversionRate}%`} subtitle={`${stats.acceptedQuotations} of ${stats.quotations} quotes won`} iconBg="#ecfdf5" iconColor="#059669" accentColor="#047857" />
+        <KpiCard icon={Briefcase} label="Orders Created" value={stats.orders} subtitle={`${stats.dispatchedOrders} shipped · ${stats.cancelledOrders} lost`} iconBg="#fffbeb" iconColor="#d97706" accentColor="#b45309" />
       </div>
 
       {/* ─── SALES BOTTOM GRID: Pipeline + Recent Quotes ─── */}
@@ -477,8 +477,8 @@ export default function DashboardPage({ user, onNavigate }) {
 
         {/* Conversion Funnel */}
         <div className="glass-panel" style={{ padding: '24px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '6px', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <BarChart3 size={18} color="#34d399" /> Sales Conversion Funnel
+          <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <BarChart3 size={18} color="#059669" /> Sales Conversion Funnel
           </h3>
           <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px' }}>
             Your enquiry-to-order pipeline progression
@@ -487,10 +487,10 @@ export default function DashboardPage({ user, onNavigate }) {
           {/* Funnel Bars */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             {[
-              { label: 'Enquiries Received', value: stats.enquiries, max: Math.max(stats.enquiries, 1), color: '#818cf8', icon: FileText },
-              { label: 'Quotations Generated', value: stats.quotations, max: Math.max(stats.enquiries, 1), color: '#22d3ee', icon: Receipt },
-              { label: 'Quotations Accepted', value: stats.acceptedQuotations, max: Math.max(stats.enquiries, 1), color: '#34d399', icon: CheckCircle2 },
-              { label: 'Orders Converted', value: stats.orders, max: Math.max(stats.enquiries, 1), color: '#f59e0b', icon: Briefcase },
+              { label: 'Enquiries Received', value: stats.enquiries, max: Math.max(stats.enquiries, 1), color: '#2563eb', icon: FileText },
+              { label: 'Quotations Generated', value: stats.quotations, max: Math.max(stats.enquiries, 1), color: '#0284c7', icon: Receipt },
+              { label: 'Quotations Accepted', value: stats.acceptedQuotations, max: Math.max(stats.enquiries, 1), color: '#059669', icon: CheckCircle2 },
+              { label: 'Orders Converted', value: stats.orders, max: Math.max(stats.enquiries, 1), color: '#d97706', icon: Briefcase },
             ].map((item, idx) => {
               const pct = item.max > 0 ? Math.round((item.value / item.max) * 100) : 0;
               return (
@@ -502,7 +502,7 @@ export default function DashboardPage({ user, onNavigate }) {
                     </div>
                     <span style={{ fontSize: '14px', fontWeight: 800, color: item.color, fontFamily: 'var(--font-mono)' }}>{item.value}</span>
                   </div>
-                  <div style={{ height: '8px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div style={{ height: '7px', background: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
                     <div style={{
                       height: '100%', borderRadius: '4px', background: item.color,
                       width: `${Math.max(pct, 3)}%`, transition: 'width 0.8s ease'
@@ -515,19 +515,19 @@ export default function DashboardPage({ user, onNavigate }) {
 
           {/* Conversion Summary */}
           <div style={{
-            marginTop: '20px', padding: '16px', background: 'rgba(16, 185, 129, 0.05)',
-            border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: 'var(--radius-md)',
+            marginTop: '20px', padding: '16px', background: '#ecfdf5',
+            border: '1px solid #a7f3d0', borderRadius: 'var(--radius-sm)',
             display: 'flex', justifyContent: 'space-between', alignItems: 'center'
           }}>
             <div>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>QUOTE-TO-ORDER RATE</div>
-              <div style={{ fontSize: '28px', fontWeight: 800, color: '#34d399', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
+              <div style={{ fontSize: '11px', color: '#047857', fontWeight: 700, textTransform: 'uppercase' }}>Quote-to-Order Rate</div>
+              <div style={{ fontSize: '26px', fontWeight: 800, color: '#065f46', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
                 {conversionRate}%
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>DEALS WON</div>
-              <div style={{ fontSize: '28px', fontWeight: 800, color: '#f59e0b', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
+              <div style={{ fontSize: '11px', color: '#b45309', fontWeight: 700, textTransform: 'uppercase' }}>Deals Won</div>
+              <div style={{ fontSize: '26px', fontWeight: 800, color: '#92400e', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
                 {stats.acceptedQuotations}
               </div>
             </div>
@@ -536,8 +536,8 @@ export default function DashboardPage({ user, onNavigate }) {
 
         {/* Recent Quotations */}
         <div className="glass-panel" style={{ padding: '24px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '6px', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Receipt size={18} color="#22d3ee" /> Recent Quotations
+          <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Receipt size={18} color="#0284c7" /> Recent Quotations
           </h3>
           <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '20px' }}>
             Latest quotations you've created and their statuses
@@ -547,11 +547,11 @@ export default function DashboardPage({ user, onNavigate }) {
             {quotationList.map((q, idx) => (
               <div key={idx} style={{
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                padding: '12px 14px', background: 'rgba(255, 255, 255, 0.02)', borderRadius: 'var(--radius-sm)',
-                border: q.status === 'ACCEPTED' ? '1px solid rgba(16, 185, 129, 0.2)' : '1px solid transparent'
+                padding: '11px 14px', background: '#f8fafc', borderRadius: 'var(--radius-xs)',
+                border: q.status === 'ACCEPTED' ? '1px solid #a7f3d0' : '1px solid var(--border-subtle)'
               }}>
                 <div>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#f1f5f9', fontFamily: 'var(--font-mono)' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
                     {q.quotation_number}
                   </div>
                   <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
@@ -575,26 +575,26 @@ export default function DashboardPage({ user, onNavigate }) {
       </div>
 
       {/* ─── SALES WORKFLOW PIPELINE ─── */}
-      <div className="glass-panel" style={{ padding: '24px', borderLeft: '4px solid #34d399' }}>
-        <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Zap size={18} color="#34d399" /> Your Sales Workflow
+      <div className="glass-panel" style={{ padding: '24px', borderLeft: '4px solid #059669' }}>
+        <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Zap size={18} color="#059669" /> Your Sales Workflow
         </h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
           {[
-            { step: '1. Capture Enquiry', desc: 'Log customer product requirements, pricing expectations, and contact information. Start the sales journey.', icon: FileText, route: 'enquiries', tab: null, color: '#818cf8' },
-            { step: '2. Build Quotation', desc: 'Create itemized quotes with product pricing, tax calculations, and discounts. Send for customer acceptance.', icon: Receipt, route: 'quotations', tab: null, color: '#22d3ee' },
-            { step: '3. Convert to Order', desc: 'Once the customer accepts your quotation, convert it into a formal Sales Order for Admin fulfillment.', icon: Briefcase, route: 'orders', tab: 'orders', color: '#34d399' },
+            { step: '1. Capture Enquiry', desc: 'Log customer product requirements, pricing expectations, and contact information. Start the sales journey.', icon: FileText, route: 'enquiries', tab: null, color: '#2563eb' },
+            { step: '2. Build Quotation', desc: 'Create itemized quotes with product pricing, tax calculations, and discounts. Send for customer acceptance.', icon: Receipt, route: 'quotations', tab: null, color: '#0284c7' },
+            { step: '3. Convert to Order', desc: 'Once the customer accepts your quotation, convert it into a formal Sales Order for Admin fulfillment.', icon: Briefcase, route: 'orders', tab: 'orders', color: '#059669' },
           ].map((item, idx) => (
             <div key={idx} onClick={() => onNavigate(item.route, item.tab)} style={{
-              padding: '20px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid var(--border-subtle)',
-              borderRadius: 'var(--radius-md)', cursor: 'pointer', transition: 'var(--transition)',
+              padding: '18px', background: '#f8fafc', border: '1px solid var(--border-subtle)',
+              borderRadius: 'var(--radius-sm)', cursor: 'pointer', transition: 'var(--transition)',
               borderTop: `3px solid ${item.color}`
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                <item.icon size={20} color={item.color} />
-                <span style={{ fontWeight: 700, fontSize: '14px', color: '#ffffff' }}>{item.step}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <item.icon size={18} color={item.color} />
+                <span style={{ fontWeight: 700, fontSize: '13.5px', color: 'var(--text-primary)' }}>{item.step}</span>
               </div>
-              <p style={{ fontSize: '12.5px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>{item.desc}</p>
+              <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: '1.5' }}>{item.desc}</p>
             </div>
           ))}
         </div>

@@ -200,12 +200,12 @@ export default function QuotationsPage({ user }) {
     <div>
       {alert && (
         <div style={{
-          padding: '12px 20px',
+          padding: '12px 18px',
           marginBottom: '20px',
-          borderRadius: 'var(--radius-md)',
-          background: alert.type === 'success' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(244, 63, 94, 0.15)',
-          border: `1px solid ${alert.type === 'success' ? '#10b981' : '#f43f5e'}`,
-          color: alert.type === 'success' ? '#6ee7b7' : '#fda4af',
+          borderRadius: 'var(--radius-sm)',
+          background: alert.type === 'success' ? '#ecfdf5' : '#fef2f2',
+          border: `1px solid ${alert.type === 'success' ? '#a7f3d0' : '#fecaca'}`,
+          color: alert.type === 'success' ? '#065f46' : '#991b1b',
           fontSize: '13.5px',
           fontWeight: 600,
           display: 'flex',
@@ -224,7 +224,7 @@ export default function QuotationsPage({ user }) {
       <div className="page-header">
         <div>
           <h1>
-            <Receipt size={24} color="#06b6d4" /> Quotation Management
+            <Receipt size={24} color="#2563eb" /> Quotation Management
           </h1>
           <p>Generate formal quotes with tax/discounts and convert accepted quotes to Sales Orders.</p>
         </div>
@@ -485,7 +485,7 @@ export default function QuotationsPage({ user }) {
                   </div>
                   <div className="quote-summary-row">
                     <span>Discount ({discountPercent}%)</span>
-                    <span style={{ fontFamily: 'var(--font-mono)', color: '#f43f5e' }}>-₹{totals.discountAmount.toLocaleString()}</span>
+                    <span style={{ fontFamily: 'var(--font-mono)', color: '#dc2626' }}>-₹{totals.discountAmount.toLocaleString()}</span>
                   </div>
                   <div className="quote-summary-row">
                     <span>Taxable Base</span>
@@ -493,7 +493,7 @@ export default function QuotationsPage({ user }) {
                   </div>
                   <div className="quote-summary-row">
                     <span>GST ({taxPercent}%)</span>
-                    <span style={{ fontFamily: 'var(--font-mono)', color: '#6ee7b7' }}>+₹{totals.taxAmount.toLocaleString()}</span>
+                    <span style={{ fontFamily: 'var(--font-mono)', color: '#059669' }}>+₹{totals.taxAmount.toLocaleString()}</span>
                   </div>
                   <div className="quote-summary-row total">
                     <span>Net Grand Total</span>
@@ -516,7 +516,7 @@ export default function QuotationsPage({ user }) {
         <div className="modal-overlay" onClick={() => setShowDetail(null)}>
           <div className="modal-content modal-lg" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3><Receipt size={18} color="#06b6d4" /> Quotation #{showDetail.quotation_number}</h3>
+              <h3><Receipt size={18} color="#2563eb" /> Quotation #{showDetail.quotation_number}</h3>
               <button className="btn-close" onClick={() => setShowDetail(null)}><X size={18} /></button>
             </div>
 
@@ -538,14 +538,14 @@ export default function QuotationsPage({ user }) {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
                   <div>
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Billed To</div>
-                    <div style={{ fontSize: '15px', fontWeight: 700, color: '#ffffff', marginTop: '2px' }}>{showDetail.customer_name}</div>
+                    <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', marginTop: '2px' }}>{showDetail.customer_name}</div>
                     <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{showDetail.customer_email}</div>
                     <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{showDetail.customer_address}</div>
                   </div>
 
                   <div style={{ textAlign: 'right' }}>
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Issued By</div>
-                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff', marginTop: '2px' }}>{showDetail.created_by_name}</div>
+                    <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginTop: '2px' }}>{showDetail.created_by_name}</div>
                     <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Valid Until: {showDetail.valid_until ? new Date(showDetail.valid_until).toLocaleDateString() : '30 Days'}</div>
                   </div>
                 </div>
@@ -563,7 +563,7 @@ export default function QuotationsPage({ user }) {
                   <tbody>
                     {(showDetail.items || []).map((it, i) => (
                       <tr key={i}>
-                        <td style={{ fontWeight: 600, color: '#ffffff' }}>{it.product_name}</td>
+                        <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{it.product_name}</td>
                         <td className="code-cell">{it.sku}</td>
                         <td>{it.quantity}</td>
                         <td className="price-cell">₹{Number(it.unit_price).toLocaleString()}</td>

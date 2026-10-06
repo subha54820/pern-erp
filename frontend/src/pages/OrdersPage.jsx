@@ -154,12 +154,12 @@ export default function OrdersPage({ user, initialTab = 'orders' }) {
     <div>
       {alert && (
         <div style={{
-          padding: '12px 20px',
+          padding: '12px 18px',
           marginBottom: '20px',
-          borderRadius: 'var(--radius-md)',
-          background: alert.type === 'success' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(244, 63, 94, 0.15)',
-          border: `1px solid ${alert.type === 'success' ? '#10b981' : '#f43f5e'}`,
-          color: alert.type === 'success' ? '#6ee7b7' : '#fda4af',
+          borderRadius: 'var(--radius-sm)',
+          background: alert.type === 'success' ? '#ecfdf5' : '#fef2f2',
+          border: `1px solid ${alert.type === 'success' ? '#a7f3d0' : '#fecaca'}`,
+          color: alert.type === 'success' ? '#065f46' : '#991b1b',
           fontSize: '13.5px',
           fontWeight: 600,
           display: 'flex',
@@ -179,9 +179,9 @@ export default function OrdersPage({ user, initialTab = 'orders' }) {
         <div>
           <h1>
             {isAdmin ? (
-              <><ShieldCheck size={24} color="#818cf8" /> Order Execution & Supply Chain Control</>
+              <><ShieldCheck size={24} color="#2563eb" /> Order Execution & Supply Chain Control</>
             ) : (
-              <><ShieldCheck size={24} color="#34d399" /> Converted Orders & Fulfillment Status</>
+              <><ShieldCheck size={24} color="#059669" /> Converted Orders & Fulfillment Status</>
             )}
           </h1>
           <p>
@@ -396,7 +396,7 @@ export default function OrdersPage({ user, initialTab = 'orders' }) {
                   dispatches.map(d => (
                     <tr key={d.id}>
                       <td className="code-cell">{d.dispatch_number}</td>
-                      <td style={{ fontWeight: 600, color: '#a5b4fc' }}>{d.order_number}</td>
+                      <td style={{ fontWeight: 600, color: '#2563eb' }}>{d.order_number}</td>
                       <td>
                         <span className="badge badge-purple" style={{ fontFamily: 'var(--font-mono)' }}>
                           {d.tracking_number || 'N/A'}
@@ -421,13 +421,13 @@ export default function OrdersPage({ user, initialTab = 'orders' }) {
         <div className="modal-overlay" onClick={() => setShowDispatchModal(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3><Truck size={18} color="#10b981" /> Execute Dispatch #{showDispatchModal.order_number}</h3>
+              <h3><Truck size={18} color="#059669" /> Execute Dispatch #{showDispatchModal.order_number}</h3>
               <button className="btn-close" onClick={() => setShowDispatchModal(null)}><X size={18} /></button>
             </div>
 
             <form onSubmit={handleProcessDispatch}>
               <div className="modal-body">
-                <div style={{ padding: '12px', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.25)', borderRadius: 'var(--radius-md)', marginBottom: '16px', fontSize: '12.5px', color: '#6ee7b7' }}>
+                <div style={{ padding: '12px', background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: 'var(--radius-sm)', marginBottom: '16px', fontSize: '12.5px', color: '#065f46' }}>
                   ℹ️ Executing this dispatch will permanently deduct physical stock and reserved stock for all line items and mark order as <strong>DISPATCHED</strong>.
                 </div>
 
@@ -469,7 +469,7 @@ export default function OrdersPage({ user, initialTab = 'orders' }) {
         <div className="modal-overlay" onClick={() => setSelectedOrder(null)}>
           <div className="modal-content modal-lg" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3><ShieldCheck size={18} color="#818cf8" /> Order #{selectedOrder.order_number}</h3>
+              <h3><ShieldCheck size={18} color="#2563eb" /> Order #{selectedOrder.order_number}</h3>
               <button className="btn-close" onClick={() => setSelectedOrder(null)}><X size={18} /></button>
             </div>
 
@@ -491,12 +491,12 @@ export default function OrdersPage({ user, initialTab = 'orders' }) {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
                   <div>
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Customer</div>
-                    <div style={{ fontSize: '15px', fontWeight: 700, color: '#ffffff' }}>{selectedOrder.customer_name}</div>
+                    <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>{selectedOrder.customer_name}</div>
                     <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{selectedOrder.customer_email}</div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Order Net Value</div>
-                    <div className="price-cell" style={{ fontSize: '20px', color: '#818cf8' }}>
+                    <div className="price-cell" style={{ fontSize: '20px', color: '#2563eb' }}>
                       ₹{Number(selectedOrder.total_amount).toLocaleString()}
                     </div>
                   </div>
@@ -515,7 +515,7 @@ export default function OrdersPage({ user, initialTab = 'orders' }) {
                   <tbody>
                     {(selectedOrder.items || []).map((it, i) => (
                       <tr key={i}>
-                        <td style={{ fontWeight: 600, color: '#ffffff' }}>{it.product_name}</td>
+                        <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{it.product_name}</td>
                         <td className="code-cell">{it.sku}</td>
                         <td>{it.quantity}</td>
                         <td className="price-cell">₹{Number(it.unit_price).toLocaleString()}</td>
