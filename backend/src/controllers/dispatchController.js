@@ -30,11 +30,11 @@ exports.processDispatch = async (req, res) => {
       });
     }
 
-    if (order.status !== 'RESERVED' && order.status !== 'CONFIRMED') {
+    if (order.status !== 'RESERVED' && order.status !== 'CONFIRMED' && order.status !== 'CREATED') {
       await client.query('ROLLBACK');
       return res.status(400).json({
         success: false,
-        message: `Order must be in RESERVED or CONFIRMED state to dispatch. Current status: '${order.status}'.`,
+        message: `Order must be in CREATED, CONFIRMED, or RESERVED state to dispatch. Current status: '${order.status}'.`,
       });
     }
 

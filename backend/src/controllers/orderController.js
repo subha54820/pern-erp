@@ -265,3 +265,61 @@ exports.reserveInventory = async (req, res) => {
     client.release();
   }
 };
+
+// Cancel Sales Order & Release Reserved Stock if applicable
+exports.cancelOrder = async (req, res) => {
+  const client = await db.getClient();
+  try {
+    const { id } = req.params;
+    await client.query('BEGIN');
+
+    const orderRes = await client.query('SELECT * FROM sales_orders WHERE id = $1 FOR UPDATE', [id]);
+    if (orderRes.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ success: false, message: 'Sales Order not found.' });
+    }
+
+    const order = orderRes.rows[0];
+    if (order.status === 'DISPATCHED') {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ success: false, message: 'Cannot cancel an order that has already been dispatched.' });
+    }
+
+    if (order.status === 'CANCELLED') {
+      await client.query('ROLLBACK');
+      return res.status(400).json({ success: false, message: 'Sales Order is already cancelled.' });
+    }
+
+    // If order was in RESERVED status, release the reserved stock back to available stock
+    if (order.status === 'RESERVED') {
+      const itemsRes = await client.query('SELECT * FROM sales_order_items WHERE sales_order_id = $1', [id]);
+      for (const item of itemsRes.rows) {
+        await client.query(
+          `UPDATE inventory 
+           SET reserved_stock = GREATEST(0, reserved_stock - $1), updated_at = CURRENT_TIMESTAMP 
+           WHERE product_id = $2`,
+          [item.quantity, item.product_id]
+        );
+      }
+    }
+
+    const updatedOrderRes = await client.query(
+      `UPDATE sales_orders SET status = 'CANCELLED' WHERE id = $1 RETURNING *`,
+      [id]
+    );
+
+    await client.query('COMMIT');
+
+    res.json({
+      success: true,
+      message: 'Sales Order cancelled successfully.',
+      data: updatedOrderRes.rows[0],
+    });
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error('Cancel order error:', error);
+    res.status(500).json({ success: false, message: error.message || 'Failed to cancel order.' });
+  } finally {
+    client.release();
+  }
+};

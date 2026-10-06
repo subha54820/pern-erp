@@ -34,11 +34,24 @@ beforeAll(async () => {
 
 describe('PERN ERP Business Rules & Workflow Suite', () => {
 
-  // Test 1: Authentication & Role Authorization
-  test('1. Authentication & Role-based Authorization', async () => {
+  // Test 1: Authentication, Registration & Role Authorization
+  test('1. Authentication, Registration & Role-based Authorization', async () => {
     // Unauthenticated request should fail with 401
     const noAuth = await request(app).get('/api/customers');
     expect(noAuth.status).toBe(401);
+
+    // Register a new user
+    const regRes = await request(app)
+      .post('/api/auth/register')
+      .send({
+        name: 'New Sales Rep',
+        email: 'newsales@fundsroom.com',
+        password: 'password123',
+        role: 'SALES_USER'
+      });
+    expect(regRes.status).toBe(201);
+    expect(regRes.body.success).toBe(true);
+    expect(regRes.body.user.role).toBe('SALES_USER');
 
     // Sales user attempting ADMIN-only action (e.g., updating physical stock) should fail with 403
     const forbidden = await request(app)
@@ -188,6 +201,55 @@ describe('PERN ERP Business Rules & Workflow Suite', () => {
 
     expect(dupDispatch.status).toBe(400);
     expect(dupDispatch.body.message).toMatch(/already been dispatched/i);
+  });
+
+  // Test 6: Order Cancellation & Reserved Stock Release
+  test('6. Cancelling a reserved order updates status to CANCELLED and releases reserved stock', async () => {
+    const prodRes = await db.query('SELECT product_id, physical_stock, reserved_stock FROM inventory LIMIT 1');
+    const prodId = prodRes.rows[0].product_id;
+    const initialReserved = prodRes.rows[0].reserved_stock;
+
+    const custRes = await db.query('SELECT id FROM customers LIMIT 1');
+    const quoteRes = await db.query(
+      `INSERT INTO quotations (quotation_number, customer_id, total_amount, status) 
+       VALUES ('QTN-TEST-CANCEL', $1, 500, 'ACCEPTED') RETURNING id`,
+      [custRes.rows[0].id]
+    );
+    const qId = quoteRes.rows[0].id;
+
+    await db.query(
+      `INSERT INTO quotation_items (quotation_id, product_id, quantity, unit_price, line_total)
+       VALUES ($1, $2, 5, 100, 500)`,
+      [qId, prodId]
+    );
+
+    const orderRes = await request(app)
+      .post(`/api/sales-orders/from-quotation/${qId}`)
+      .set('Authorization', `Bearer ${salesToken}`);
+
+    expect(orderRes.status).toBe(201);
+    const newOrderId = orderRes.body.data.id;
+
+    // Reserve stock for this order
+    await request(app)
+      .post(`/api/sales-orders/${newOrderId}/reserve-stock`)
+      .set('Authorization', `Bearer ${adminToken}`);
+
+    // Verify stock was reserved
+    const reservedInv = await db.query('SELECT reserved_stock FROM inventory WHERE product_id = $1', [prodId]);
+    expect(reservedInv.rows[0].reserved_stock).toBe(initialReserved + 5);
+
+    // Now Cancel the order
+    const cancelRes = await request(app)
+      .patch(`/api/sales-orders/${newOrderId}/cancel`)
+      .set('Authorization', `Bearer ${adminToken}`);
+
+    expect(cancelRes.status).toBe(200);
+    expect(cancelRes.body.data.status).toBe('CANCELLED');
+
+    // Verify reserved stock was released back
+    const releasedInv = await db.query('SELECT reserved_stock FROM inventory WHERE product_id = $1', [prodId]);
+    expect(releasedInv.rows[0].reserved_stock).toBe(initialReserved);
   });
 
 });

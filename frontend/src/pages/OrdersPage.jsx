@@ -13,12 +13,13 @@ import {
   FileCheck,
   Send,
   Layers,
-  ArrowRight
+  ArrowRight,
+  XCircle
 } from 'lucide-react';
 import api from '../api';
 
-export default function OrdersPage({ user }) {
-  const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'inventory' | 'dispatches'
+export default function OrdersPage({ user, initialTab = 'orders' }) {
+  const [activeTab, setActiveTab] = useState(initialTab); // 'orders' | 'inventory' | 'dispatches'
   const [orders, setOrders] = useState([]);
   const [inventory, setInventory] = useState([]);
   const [dispatches, setDispatches] = useState([]);
@@ -30,6 +31,10 @@ export default function OrdersPage({ user }) {
   const [dispatchNotes, setDispatchNotes] = useState('');
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState(null);
+
+  useEffect(() => {
+    setActiveTab(initialTab);
+  }, [initialTab]);
 
   useEffect(() => { 
     fetchAllData(); 
@@ -75,6 +80,18 @@ export default function OrdersPage({ user }) {
     }
   };
 
+  const handleCancelOrder = async (id) => {
+    if (!window.confirm('Are you sure you want to cancel this order? If reserved, stock will be released.')) return;
+    try {
+      await api.patch(`/sales-orders/${id}/cancel`);
+      setAlert({ type: 'success', msg: 'Sales Order cancelled successfully.' });
+      fetchAllData();
+      if (selectedOrder && selectedOrder.id === id) viewOrderDetail(id);
+    } catch (err) {
+      setAlert({ type: 'error', msg: err.response?.data?.message || 'Failed to cancel order.' });
+    }
+  };
+
   const handleProcessDispatch = async (e) => {
     e.preventDefault();
     if (!showDispatchModal) return;
@@ -106,8 +123,12 @@ export default function OrdersPage({ user }) {
 
   const getStatusBadge = (status) => {
     switch (status) {
+      case 'CREATED':
+        return <span className="badge badge-amber"><span className="badge-dot" /> CREATED</span>;
       case 'CONFIRMED':
         return <span className="badge badge-blue"><span className="badge-dot" /> CONFIRMED</span>;
+      case 'RESERVED':
+        return <span className="badge badge-purple"><span className="badge-dot" /> STOCK RESERVED</span>;
       case 'DISPATCHED':
         return <span className="badge badge-green"><span className="badge-dot" /> DISPATCHED</span>;
       case 'CANCELLED':
@@ -157,9 +178,17 @@ export default function OrdersPage({ user }) {
       <div className="page-header">
         <div>
           <h1>
-            <ShieldCheck size={24} color="#818cf8" /> Order Execution & Supply Chain
+            {isAdmin ? (
+              <><ShieldCheck size={24} color="#818cf8" /> Order Execution & Supply Chain Control</>
+            ) : (
+              <><ShieldCheck size={24} color="#34d399" /> Converted Orders & Fulfillment Status</>
+            )}
           </h1>
-          <p>Fulfill confirmed orders, manage inventory allocations, and process dispatches.</p>
+          <p>
+            {isAdmin 
+              ? 'Administrator control: Confirm incoming sales orders, lock inventory allocations, and execute dispatches.'
+              : 'Sales overview: Track fulfillment lifecycle of converted customer orders in real-time.'}
+          </p>
         </div>
 
         <div className="page-actions">
@@ -168,7 +197,7 @@ export default function OrdersPage({ user }) {
               className={`filter-pill ${activeTab === 'orders' ? 'active' : ''}`}
               onClick={() => setActiveTab('orders')}
             >
-              Sales Orders ({orders.length})
+              {isAdmin ? 'Sales Orders' : 'My Converted Orders'} ({orders.length})
             </button>
             <button 
               className={`filter-pill ${activeTab === 'inventory' ? 'active' : ''}`}
@@ -237,19 +266,19 @@ export default function OrdersPage({ user }) {
                             <Eye size={13} /> View
                           </button>
 
-                          {isAdmin && o.status === 'PENDING' && (
+                          {isAdmin && (o.status === 'CREATED' || o.status === 'PENDING') && (
                             <button className="btn btn-primary btn-sm" onClick={() => handleConfirmOrder(o.id)}>
                               <CheckCircle size={13} /> Confirm
                             </button>
                           )}
 
-                          {isAdmin && (o.status === 'PENDING' || o.status === 'CONFIRMED') && (
+                          {isAdmin && (o.status === 'CREATED' || o.status === 'CONFIRMED' || o.status === 'PENDING') && (
                             <button className="btn btn-secondary btn-sm" onClick={() => handleReserveStock(o.id)} title="Reserve Stock in Inventory">
                               <Package size={13} /> Reserve Stock
                             </button>
                           )}
 
-                          {isAdmin && (o.status === 'CONFIRMED' || o.status === 'PENDING') && (
+                          {isAdmin && (o.status === 'CREATED' || o.status === 'CONFIRMED' || o.status === 'RESERVED' || o.status === 'PENDING') && (
                             <button 
                               className="btn btn-emerald btn-sm" 
                               onClick={() => {
@@ -258,6 +287,12 @@ export default function OrdersPage({ user }) {
                               }}
                             >
                               <Truck size={13} /> Dispatch
+                            </button>
+                          )}
+
+                          {o.status !== 'DISPATCHED' && o.status !== 'CANCELLED' && (
+                            <button className="btn btn-danger btn-sm" onClick={() => handleCancelOrder(o.id)} title="Cancel Order">
+                              <XCircle size={13} /> Cancel
                             </button>
                           )}
                         </div>
@@ -493,21 +528,32 @@ export default function OrdersPage({ user }) {
             </div>
 
             <div className="modal-footer">
-              {isAdmin && selectedOrder.status === 'PENDING' && (
+              {isAdmin && (selectedOrder.status === 'CREATED' || selectedOrder.status === 'PENDING') && (
                 <button className="btn btn-primary" onClick={() => handleConfirmOrder(selectedOrder.id)}>
                   Confirm Order
                 </button>
               )}
-              {isAdmin && (selectedOrder.status === 'CONFIRMED' || selectedOrder.status === 'PENDING') && (
+              {isAdmin && (selectedOrder.status === 'CREATED' || selectedOrder.status === 'CONFIRMED' || selectedOrder.status === 'PENDING') && (
+                <button className="btn btn-secondary" onClick={() => handleReserveStock(selectedOrder.id)}>
+                  <Package size={15} /> Reserve Stock
+                </button>
+              )}
+              {isAdmin && (selectedOrder.status === 'CREATED' || selectedOrder.status === 'CONFIRMED' || selectedOrder.status === 'RESERVED' || selectedOrder.status === 'PENDING') && (
                 <button 
                   className="btn btn-emerald"
                   onClick={() => {
+                    const orderToDispatch = selectedOrder;
                     setSelectedOrder(null);
-                    setShowDispatchModal(selectedOrder);
+                    setShowDispatchModal(orderToDispatch);
                     setTrackingNumber(`TRK-${Math.floor(100000 + Math.random() * 900000)}`);
                   }}
                 >
                   <Truck size={15} /> Process Dispatch
+                </button>
+              )}
+              {selectedOrder.status !== 'DISPATCHED' && selectedOrder.status !== 'CANCELLED' && (
+                <button className="btn btn-danger" onClick={() => handleCancelOrder(selectedOrder.id)}>
+                  <XCircle size={15} /> Cancel Order
                 </button>
               )}
               <button className="btn btn-secondary" onClick={() => setSelectedOrder(null)}>Close</button>

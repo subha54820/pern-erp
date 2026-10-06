@@ -10,10 +10,14 @@ router.get('/:id', verifyToken, orderController.getOrderById);
 router.post('/from-quotation/:quotationId', verifyToken, authorizeRoles('SALES_USER', 'ADMIN'), orderController.createOrderFromQuotation);
 
 // ADMIN: Confirm Sales Order
-router.patch('/:id/confirm', verifyToken, authorizeRoles('ADMIN'), orderController.confirmOrder);
-router.patch('/:id/status', verifyToken, authorizeRoles('ADMIN'), (req, res) => {
+// ADMIN & SALES USER: Cancel Sales Order
+router.patch('/:id/cancel', verifyToken, authorizeRoles('ADMIN', 'SALES_USER'), orderController.cancelOrder);
+router.patch('/:id/status', verifyToken, authorizeRoles('ADMIN', 'SALES_USER'), (req, res) => {
   if (req.body.status === 'CONFIRMED') {
     return orderController.confirmOrder(req, res);
+  }
+  if (req.body.status === 'CANCELLED') {
+    return orderController.cancelOrder(req, res);
   }
   res.status(400).json({ success: false, message: 'Invalid order status transition.' });
 });

@@ -4,6 +4,8 @@ const authController = require('../controllers/authController');
 const { verifyToken } = require('../middleware/auth');
 
 router.post('/login', authController.login);
+router.post('/register', authController.register);
+router.post('/switch-role', authController.switchRole);
 router.get('/me', verifyToken, authController.getMe);
 
 module.exports = router;
